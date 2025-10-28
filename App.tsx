@@ -22,20 +22,25 @@ const App: React.FC = () => {
 
   const handleIdentified = useCallback((identifiedUser: User) => {
     setUser(identifiedUser);
-    // Simulate that a returning user has some saved registration data
-    // In a real app, this would be fetched from a database
     if (!registrationData) {
         setRegistrationData({
             name: identifiedUser.name,
-            age: 30, height: 180, weight: 80,
+            age: 30, height: 180, weight: 80, email: 'alex@example.com',
             healthNotes: 'None',
             goals: 'Build muscle and increase strength',
             focusAreas: 'Chest and back'
         });
     }
-    setPlanUpdateNeeded(Math.random() < 0.4); // 40% chance of needing an update
+    setPlanUpdateNeeded(Math.random() < 0.4); 
     setAppState(AppState.Dashboard);
   }, [registrationData]);
+  
+  const handleLogin = useCallback((email: string, pass: string) => {
+      console.log('Logging in with', email, pass);
+      // Mock successful login
+      const mockUser: User = { id: 'user-456', name: 'Maria', avatarUrl: `https://picsum.photos/seed/Maria/200` };
+      handleIdentified(mockUser);
+  }, [handleIdentified]);
 
   const handleStartRegistration = useCallback(() => {
     setAppState(AppState.Register);
@@ -94,18 +99,22 @@ const App: React.FC = () => {
   const handleDismissUpdateAlert = useCallback(() => {
     setPlanUpdateNeeded(false);
   }, []);
+  
+  const resetToWelcome = useCallback(() => {
+    setAppState(AppState.Welcome);
+  }, []);
 
   const renderContent = () => {
     switch (appState) {
       case AppState.Welcome:
-        return <WelcomeScreen onIdentified={handleIdentified} onStartRegistration={handleStartRegistration} />;
+        return <WelcomeScreen onIdentified={handleIdentified} onStartRegistration={handleStartRegistration} onLogin={handleLogin} />;
       case AppState.Register:
-        return <RegistrationScreen onComplete={handleCompleteRegistration} />;
+        return <RegistrationScreen onComplete={handleCompleteRegistration} onBackToWelcome={resetToWelcome} />;
       case AppState.WorkoutPlan:
         if (user && workoutPlan) {
             return <WorkoutPlanScreen user={user} plan={workoutPlan} onContinue={handleShowDashboard} />;
         }
-        setAppState(AppState.Welcome);
+        resetToWelcome();
         return null;
       case AppState.Dashboard:
         if (user) {
@@ -118,7 +127,7 @@ const App: React.FC = () => {
                     onDismissUpdateAlert={handleDismissUpdateAlert}
                  />;
         }
-        setAppState(AppState.Welcome);
+        resetToWelcome();
         return null;
       case AppState.Instructions:
         if (currentExercise) {
@@ -139,7 +148,7 @@ const App: React.FC = () => {
         setAppState(AppState.Dashboard);
         return null;
       default:
-        setAppState(AppState.Welcome);
+        resetToWelcome();
         return null;
     }
   };

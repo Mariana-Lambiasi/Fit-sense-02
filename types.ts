@@ -46,6 +46,7 @@ export interface RegistrationData {
     age: number;
     height: number;
     weight: number;
+    email: string;
     healthNotes: string;
     goals: string;
     focusAreas: string;
