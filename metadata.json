@@ -1,0 +1,7 @@
+{
+  "name": "Fitsense",
+  "description": "An AI-powered gym assistant that uses your device's camera to analyze your form, provide real-time feedback on your exercises, and suggest optimal weights to prevent injuries and maximize your workout.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
